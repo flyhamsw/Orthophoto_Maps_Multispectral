@@ -15,14 +15,7 @@ def getMetadataExiv2(path):
         focal_length = int(focalLength[0])
         focal_length = focal_length * pow(10, -3)  # unit: m
 
-    # Sensor Width
-    try:
-        sensorWidth = metadata['Exif.Photo.FocalPlaneXResolution'].value    # width
-        sensor_width = sensorWidth.numerator / sensorWidth.denominator   # unit: mm
-    except:
-        sensor_width = 0
-
-    return focal_length, sensor_width
+    return focal_length
 
 def restoreOrientation(image, orientation):
     if orientation == 8:

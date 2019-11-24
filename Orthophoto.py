@@ -8,7 +8,6 @@ from Boundary import boundary
 from BackprojectionResample import projectedCoord, backProjection, resample, createGeoTiff
 from system_calibration import calibrate
 import subprocess
-import gdal2tiles
 
 if __name__ == '__main__':
     ground_height = 0  # unit: m
@@ -18,11 +17,11 @@ if __name__ == '__main__':
          [-0.135993334134149, 0.989711806459606, 0.0444561944563446],
          [-0.0121505910810649, -0.0465359159242159, 0.998842716179817]], dtype=float)
 
-    dst_path = '/internalCompany/PM2019007_nifs/DKC/gomso_thumbnails_orthophoto/'
+    dst_path = 'gomso_thumbnails_orthophoto/'
     file_list = []
 
     # for root, dirs, files in os.walk('./tests/yeosu_stacks'):
-    for root, dirs, files in os.walk('/internalCompany/PM2019007_nifs/DKC/gomso_thumbnails'):
+    for root, dirs, files in os.walk('gomso_thumbnails'):
         files.sort()
         for file in files:
             image_start_time = time.time()
@@ -37,7 +36,7 @@ if __name__ == '__main__':
                 image = cv2.imread(file_path, -1)
 
                 # 1. Extract metadata from the imagemm
-                focal_length, sensor_width = getMetadataExiv2(file_path)  # unit: m,
+                focal_length = getMetadataExiv2(file_path)  # unit: m,
                 # pixel_size = sensor_width / image_cols  # unit: mm/px
                 pixel_size = 0.00375  # unit: mm/px
                 pixel_size = pixel_size / 1000  # unit: m/px
@@ -112,15 +111,19 @@ if __name__ == '__main__':
     set_env = './otbenv.profile'
     mosaic_execution = './otbcli_Mosaic'
 
-    os.chdir(working_path1)     # change path
-    # https://stackoverflow.com/questions/13702425/source-command-not-found-in-sh-shell/13702876
-    subprocess.call(set_env, shell=True)
+    # os.chdir(working_path1)     # change path
+    # # https://stackoverflow.com/questions/13702425/source-command-not-found-in-sh-shell/13702876
+    # subprocess.call(set_env, shell=True)
+    #
+    # os.chdir(working_path2)
+    # subprocess.call(mosaic_execution + ' -il ' + ' '.join(file_list) +
+    #                 ' -out ' + dst_path + '/IMG_RGB.tif', shell=True)
 
-    os.chdir(working_path2)
-    subprocess.call(mosaic_execution + ' -il ' + ' '.join(file_list) +
+    subprocess.call('./OTB-7.0.0-Linux64/otbenv.profile', shell=True)
+    subprocess.call('./OTB-7.0.0-Linux64/bin/otbcli_Mosaic ' + ' -il ' + ' '.join(file_list) +
                     ' -out ' + dst_path + '/IMG_RGB.tif', shell=True)
 
-    # 12. Generate tiles
-    options = {'zoom': (14, 21)}
-    gdal2tiles.generate_tiles(dst_path + '/IMG_RGB.tif', dst_path + '/tiles/', **options)
+    # # 12. Generate tiles
+    # options = {'zoom': (14, 21)}
+    # gdal2tiles.generate_tiles(dst_path + '/IMG_RGB.tif', dst_path + '/tiles/', **options)
 

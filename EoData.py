@@ -89,7 +89,7 @@ def convertCoordinateSystem(eo):
 
     # Check the transformation for a point close to the centre of the projected grid
     # xy = latlon2tm.TransformPoint(float(eo[0]), float(eo[1]))  # The order: Lon, Lat
-    xy = latlon2world.TransformPoint(float(eo[0]), float(eo[1]))  # The order: Lon, Lat
+    xy = latlon2world.TransformPoint(float(eo[1]), float(eo[0]))  # The order: Lon, Lat
     eo[0:2] = xy[0:2]
 
     return eo
