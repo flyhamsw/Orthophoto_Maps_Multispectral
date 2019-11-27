@@ -123,7 +123,6 @@ if __name__ == '__main__':
     subprocess.call('./OTB-7.0.0-Linux64/bin/otbcli_Mosaic ' + ' -il ' + ' '.join(file_list) +
                     ' -out ' + dst_path + '/IMG_RGB.tif', shell=True)
 
-    # # 12. Generate tiles
-    # options = {'zoom': (14, 21)}
-    # gdal2tiles.generate_tiles(dst_path + '/IMG_RGB.tif', dst_path + '/tiles/', **options)
-
+    # 12. Generate tiles
+    os.system('gdal_translate -of mbtiles %s/IMG_RGB.tif %s/IMG_RGB.mbtiles' % (dst_path, dst_path))
+    os.system('gdaladdo -r nearest %s/IMG_RGB.mbtiles 2 4 8 16' % dst_path)
